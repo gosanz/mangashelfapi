@@ -15,6 +15,7 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    deleted_at =Column(DateTime(timezone=True), nullable=True)
 
     # Relations
-    collections = relationship("UserCollection", back_populates="user")
+    collections = relationship("UserManga", back_populates="user")

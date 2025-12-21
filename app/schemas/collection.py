@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from app.schemas.manga import MangaResponse
 
-class CollectionAdd(BaseModel):
+class CollectionAddManga(BaseModel):
     manga_id: int
     is_owned: bool = False
     is_reading: bool = False
@@ -15,7 +15,7 @@ class CollectionAdd(BaseModel):
     notes: str | None = None
 
 
-class CollectionUpdate(BaseModel):
+class CollectionUpdateManga(BaseModel):
     is_owned: bool | None = None
     is_reading: bool | None = None
     is_completed: bool | None = None

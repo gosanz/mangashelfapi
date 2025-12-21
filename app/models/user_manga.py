@@ -3,8 +3,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.core.database import Base
 
-class UserCollection(Base):
-    __tablename__ = "user_collections"
+class UserManga(Base):
+    __tablename__ = "user_mangas"
 
     # Primary key
     user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
@@ -27,5 +27,5 @@ class UserCollection(Base):
     notes = Column(Text, nullable=True)
 
     # Relations
-    user = relationship("User", back_populates="collections")
-    manga = relationship("Manga", back_populates="collections")
+    user = relationship("User", back_populates="mangas")
+    manga = relationship("Manga", back_populates="users")

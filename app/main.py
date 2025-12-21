@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from app.core.database import get_db, engine, Base
-from app.models import User, Manga, UserCollection
+from app.models import User, Manga, UserManga
 from app.routers import auth
 from app.dependencies.auth import get_current_active_user
 

@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.manga import Manga
 from app.schemas.manga import MangaCreate
-from typing import Optional, List
 
 
 def create_manga(db: Session, manga: MangaCreate) -> Manga:
@@ -23,24 +22,44 @@ def create_manga(db: Session, manga: MangaCreate) -> Manga:
 
     return db_manga
 
-def update_manga(db: Session, manga: MangaCreate) -> Manga:
-    pass
+def create_mangas_bulk(db: Session, mangas: list[MangaCreate]) -> list[Manga]:
+    """Creates multiple mangas in the db"""
 
-def delete_manga(db: Session, title) -> bool:
-    db.delete(title)
+    db_mangas = [
+        Manga(
+            title=manga.title,
+            author=manga.author,
+            publisher=manga.publisher,
+            isbn=manga.isbn,
+            description=manga.description,
+            cover_image_url=manga.cover_image_url,
+            volumes_total=manga.volumes_total
+        )
+    for manga in mangas
+    ]
+
+    db.add_all(db_mangas)
     db.commit()
-    db.refresh(title)
+    for manga in db_mangas:
+        db.refresh(manga)
 
-    return True
 
-def get_manga_by_isbn(db: Session, isbn: str) -> Optional[Manga]:
+    return db_mangas
+
+def get_manga_by_id(db: Session, manga_id: int) -> Manga | None:
+    """Searches manga by id"""
+    return db.query(Manga).filter(Manga.id == manga_id).first()
+
+def get_manga_by_isbn(db: Session, isbn: str) -> Manga | None:
     """Searches manga by isbn"""
     return db.query(Manga).filter(Manga.isbn == isbn).first()
 
-def get_manga_by_title(db: Session, title: str) -> Optional[Manga]:
-    """Searches manga by title"""
-    return db.query(Manga).filter(Manga.title == title).first()
+def search_mangas(db: Session, query: str, skip: int = 0, limit: int = 1000) -> list[Manga]:
+    """Searches all mangas by title or author"""
+    return db.query(Manga).filter( # type: ignore
+        (Manga.title.ilike(f"%{query}%")) | (Manga.author.ilike(f"%{query}%"))
+    ).offset(skip).limit(limit).all()
 
-def get_mangas_by_author(db: Session, author: str) -> List[Manga]:
-    """Searches all mangas by author"""
-    return db.query(Manga).filter(Manga.author == author).all() # type: ignore
+def get_all_mangas(db: Session, skip: int = 0, limit: int = 1000) -> list[Manga]:
+    """Get all mangas with pagination"""
+    return db.query(Manga).offset(skip).limit(limit).all() # type: ignore
