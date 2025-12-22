@@ -18,4 +18,4 @@ class User(Base):
     deleted_at =Column(DateTime(timezone=True), nullable=True)
 
     # Relations
-    collections = relationship("UserManga", back_populates="user")
+    mangas = relationship("UserManga", back_populates="user")

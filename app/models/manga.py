@@ -18,4 +18,4 @@ class Manga(Base):
     volumes_total = Column(Integer, nullable=True)
 
     # Relations
-    collections = relationship("UserManga", back_populates="manga")
+    users = relationship("UserManga", back_populates="manga")
