@@ -2,8 +2,9 @@ from sqlalchemy.orm import Session
 from app.models import UserManga
 from app.models.user import User
 from app.schemas.user import UserCreate
-from app.utils.security import hash_password
+from app.utils.security import hash_password, verify_password
 from datetime import datetime, timedelta, timezone
+
 def create_user(db: Session, user: UserCreate) -> User:
     """Creates a user in the db"""
     hashed_password = hash_password(user.password)
@@ -28,6 +29,36 @@ def get_user_by_username(db: Session, username: str) -> User | None:
     """Searches user by name"""
     return db.query(User).filter(User.username == username).first()
 
+def update_user_profile(db: Session, user_id: int, email: str | None = None, username: str | None = None):
+    user = db.query(User).filter(User.id == user_id).first()
+
+    if not user:
+        return None
+
+    if email is not None:
+        user.email = email
+
+    if username is not None:
+        user.username = username
+
+    db.commit()
+    db.refresh(user)
+    return user
+
+def update_user_password(db: Session, user_id: int, current_password: str, new_password: str) -> User | None:
+    user = db.query(User).filter(User.id == user_id).first()
+
+    if not user:
+        return None
+
+    if not verify_password(current_password, user.hashed_password):
+        return None
+
+    user.hashed_password = hash_password(new_password)
+    db.commit()
+    db.refresh(user)
+    return user # type: ignore
+
 def soft_delete_user(db: Session, user_id: int) -> User | None:
     user = db.query(User).filter(User.id == user_id).first()
 
@@ -41,8 +72,8 @@ def soft_delete_user(db: Session, user_id: int) -> User | None:
 
     return user # type: ignore
 
-def restore_user(db: Session, username: str) -> User | None:
-    user = db.query(User).filter(User.username == username).first()
+def restore_user(db: Session, user_id: int) -> User | None:
+    user = db.query(User).filter(User.id == user_id).first()
 
     if not user or not user.deleted_at:
         return None
