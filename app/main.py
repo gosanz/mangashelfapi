@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from app.core.database import get_db, engine, Base
 from app.models import User, Manga, UserManga
-from app.routers import auth, collection, manga
+from app.routers import auth, collection, manga, stats
 from app.dependencies.auth import get_current_active_user
 
 app = FastAPI(title="MangaShelfAPI", description="API for storing and querying your manga collection", version="1.0")
@@ -14,6 +14,7 @@ Base.metadata.create_all(bind=engine)
 app.include_router(auth.router)
 app.include_router(collection.router)
 app.include_router(manga.router)
+app.include_router(stats.router)
 
 #Routers
 @app.get("/")
