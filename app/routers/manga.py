@@ -28,7 +28,7 @@ def create_manga(manga: MangaCreate,
 @router.get("/search", response_model=list[MangaResponse])
 def search_mangas(q: str = Query(..., min_length=1, description="Search Query"),
                   skip: int = Query(0, ge=0),
-                  limit: int = Query(20, ge=1, le=100),
+                  limit: int = Query(50, ge=1, le=100),
                   db: Session = Depends(get_db),
                   current_user: User = Depends(get_current_active_user)
 ):
@@ -72,7 +72,7 @@ def get_manga(
 @router.get("/", response_model=list[MangaResponse])
 def list_mangas(
         skip: int = Query(0, ge=0),
-        limit: int = Query(100, ge=1, le=100),
+        limit: int = Query(50, ge=1, le=100),
         db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ):

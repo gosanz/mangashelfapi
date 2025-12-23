@@ -27,7 +27,7 @@ def add_to_collection(db: Session, user_id: int, manga_data: CollectionAddManga)
 
     return db_collection
 
-def get_user_collection(db: Session, user_id: int, skip: int = 0, limit: int = 1000) -> list[UserManga]:
+def get_user_collection(db: Session, user_id: int, skip: int = 0, limit: int = 100) -> list[UserManga]:
     return db.query(UserManga).filter(UserManga.user_id == user_id).offset(skip).limit(limit).all() # type: ignore
 
 def get_collection_entry(db: Session, user_id: int, manga_id: int) -> UserManga | None:
@@ -62,7 +62,7 @@ def remove_from_collection(db: Session, user_id: int, manga_id: int) -> bool:
     db.commit()
     return True
 
-def get_user_wishlist(db: Session, user_id: int, skip: int = 0, limit: int = 1000) -> list[UserManga]:
+def get_user_wishlist(db: Session, user_id: int, skip: int = 0, limit: int = 100) -> list[UserManga]:
     return db.query(UserManga).filter(UserManga.user_id == user_id, UserManga.is_wishlist == True).offset(skip).limit(limit).all() # type: ignore
 
 def get_user_reading(db: Session, user_id:int) -> list[UserManga]:

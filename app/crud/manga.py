@@ -54,12 +54,12 @@ def get_manga_by_isbn(db: Session, isbn: str) -> Manga | None:
     """Searches manga by isbn"""
     return db.query(Manga).filter(Manga.isbn == isbn).first()
 
-def search_mangas(db: Session, query: str, skip: int = 0, limit: int = 1000) -> list[Manga]:
+def search_mangas(db: Session, query: str, skip: int = 0, limit: int = 100) -> list[Manga]:
     """Searches all mangas by title or author"""
     return db.query(Manga).filter( # type: ignore
         (Manga.title.ilike(f"%{query}%")) | (Manga.author.ilike(f"%{query}%"))
     ).offset(skip).limit(limit).all()
 
-def get_all_mangas(db: Session, skip: int = 0, limit: int = 1000) -> list[Manga]:
+def get_all_mangas(db: Session, skip: int = 0, limit: int = 100) -> list[Manga]:
     """Get all mangas with pagination"""
     return db.query(Manga).offset(skip).limit(limit).all() # type: ignore
