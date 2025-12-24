@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.models import UserManga
+from app.models import UserMangaVolume
 from app.models.user import User
 from app.schemas.user import UserCreate
 from app.utils.security import hash_password, verify_password
@@ -97,7 +97,7 @@ def delete_user(db: Session, user_id: int) -> bool:
         if datetime.now(timezone.utc) - user.deleted_at <= grace_period:
             return False
 
-    db.query(UserManga).filter(UserManga.user_id == user_id).delete()
+    db.query(UserMangaVolume).filter(UserMangaVolume.user_id == user_id).delete()
     db.delete(user)
     db.commit()
     return True
