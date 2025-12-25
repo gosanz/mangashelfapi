@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.schemas.manga_volumes import MangaVolumeCreate, MangaVolumeResponse
 from app.crud import manga_volumes as crud_volumes
-from app.dependencies.auth import get_current_active_user
+from app.dependencies.auth import get_current_active_user, get_current_admin_user
 from app.models.user import User
 
 router = APIRouter(
@@ -16,7 +16,7 @@ router = APIRouter(
 def create_volume(
         volume: MangaVolumeCreate,
         db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_active_user)
+        current_user: User = Depends(get_current_admin_user)
 ):
     """Crea un tomo de manga"""
     # Verificar si ya existe por ISBN
@@ -35,7 +35,7 @@ def create_volume(
 def create_volumes_bulk(
         volumes: list[MangaVolumeCreate],
         db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_active_user)
+        current_user: User = Depends(get_current_admin_user)
 ):
     """Crea múltiples tomos de una vez (bulk insert)"""
     return crud_volumes.create_volumes_bulk(db, volumes)

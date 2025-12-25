@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.schemas.publishers import PublisherCreate, PublisherResponse
 from app.crud import publishers as crud_publishers
-from app.dependencies.auth import get_current_active_user
+from app.dependencies.auth import get_current_active_user, get_current_admin_user
 from app.models.user import User
 
 router = APIRouter(
@@ -16,7 +16,7 @@ router = APIRouter(
 def create_publisher(
         publisher: PublisherCreate,
         db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_active_user)
+        current_user: User = Depends(get_current_admin_user)
 ):
     """Crea una editorial"""
     # Verificar que no exista

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.schemas.manga_series import MangaSeriesCreate, MangaSeriesResponse
 from app.crud import manga_series as crud_series
-from app.dependencies.auth import get_current_active_user
+from app.dependencies.auth import get_current_active_user, get_current_admin_user
 from app.models.user import User
 
 router = APIRouter(
@@ -16,7 +16,7 @@ router = APIRouter(
 def create_series(
         series: MangaSeriesCreate,
         db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_active_user)
+        current_user: User = Depends(get_current_admin_user)
 ):
     """Crea una serie de manga"""
     return crud_series.create_series(db, series)
