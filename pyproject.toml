@@ -5,13 +5,17 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "cryptography>=46.0.3",
     "fastapi[standard-no-fastapi-cloud-cli]>=0.120.2",
+    "google-auth>=2.45.0",
     "passlib[argon2]>=1.7.4",
     "psycopg2-binary>=2.9.11",
     "pydantic-settings>=2.11.0",
     "pydantic[email]>=2.12.3",
+    "pyjwt>=2.10.1",
     "python-dotenv>=1.2.1",
     "python-jose[cryptography]>=3.5.0",
     "python-multipart>=0.0.20",
+    "requests>=2.32.5",
     "sqlalchemy[mypy]>=2.0.44",
 ]

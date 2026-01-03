@@ -23,6 +23,8 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     deleted_at =Column(DateTime(timezone=True), nullable=True)
+    google_id = Column(String, unique=True, nullable=True, index=True)
+    apple_id = Column(String, unique=True, nullable=True, index=True)
 
     # Relations
     #mangas = relationship("UserManga", back_populates="user")

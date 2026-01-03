@@ -11,4 +11,5 @@ from .stats import (
 )
 from .token import Token, TokenData
 from .user import UserCreate, UserResponse, UserUpdate, PasswordChange
+from .oauth import GoogleAuthRequest, AppleAuthRequest
 from .user_collection import UserCollectionAdd, UserCollectionUpdate, UserCollectionResponse

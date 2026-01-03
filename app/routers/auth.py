@@ -6,7 +6,10 @@ from app.core.database import get_db
 from app.core.config import settings
 from app.schemas.user import UserCreate, UserResponse
 from app.schemas.token import Token
+from app.schemas.oauth import GoogleAuthRequest, AppleAuthRequest
 from app.crud import user as crud_user
+from app.crud import oauth as crud_oauth
+from app.services.oauth import verify_google_token, verify_apple_token
 from app.utils.security import verify_password, create_access_token
 
 router = APIRouter(
@@ -41,3 +44,70 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
                                        expires_delta=access_token_expires)
 
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.post("/google", response_model=Token)
+async def google_auth(
+        auth_data: GoogleAuthRequest,
+        db: Session = Depends(get_db)
+):
+    """Autenticación con Google"""
+    try:
+        # Verificar token de Google
+        user_info = await verify_google_token(auth_data.id_token)
+
+        # Obtener o crear usuario
+        user = crud_oauth.get_or_create_google_user(
+            db,
+            google_id=user_info["google_id"],
+            email=user_info["email"],
+            name=user_info.get("name")
+        )
+
+        # Generar JWT
+        access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": str(user.id)},
+            expires_delta=access_token_expires
+        )
+
+        return {"access_token": access_token, "token_type": "bearer"}
+
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+
+
+@router.post("/apple", response_model=Token)
+async def apple_auth(
+        auth_data: AppleAuthRequest,
+        db: Session = Depends(get_db)
+):
+    """Autenticación con Apple"""
+    try:
+        # Verificar token de Apple
+        user_info = await verify_apple_token(auth_data.identity_token)
+
+        # Obtener o crear usuario
+        user = crud_oauth.get_or_create_apple_user(
+            db,
+            apple_id=user_info["apple_id"],
+            email=auth_data.email or user_info.get("email")
+        )
+
+        # Generar JWT
+        access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": str(user.id)},
+            expires_delta=access_token_expires
+        )
+
+        return {"access_token": access_token, "token_type": "bearer"}
+
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
