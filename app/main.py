@@ -1,3 +1,4 @@
+import uvicorn # Solo para debug
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from app.core.database import get_db, engine, Base
@@ -35,3 +36,12 @@ def read_users_me(current_user: User = Depends(get_current_active_user)):
         "email": current_user.email,
         "is_active": current_user.is_active
     }
+
+# Solo para debug
+if __name__ == "__main__":
+    uvicorn.run(
+        "app.main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=False  # ❌ no usar reload en modo debug
+    )

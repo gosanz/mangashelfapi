@@ -49,12 +49,14 @@ async def verify_apple_token(identity_token: str) -> dict:
         if not public_key:
             raise ValueError("Public key not found")
 
+        valid_audiences = [settings.APPLE_CLIENT_ID, "host.exp.Exponent"]
+
         # Verificar y decodificar el token
         decoded = jwt.decode(
             identity_token,
             public_key,
             algorithms=['RS256'],
-            audience=settings.APPLE_CLIENT_ID,  # Bundle ID de tu app
+            audience=valid_audiences,  # Bundle ID de tu app
             issuer='https://appleid.apple.com'
         )
 
